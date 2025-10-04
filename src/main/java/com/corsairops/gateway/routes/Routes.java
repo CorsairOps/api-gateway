@@ -29,6 +29,15 @@ public class Routes {
     }
 
     @Bean
+    public RouterFunction<ServerResponse> assetServiceSwaggerRoute() {
+        return route("assetServiceSwaggerRoute")
+                .before(BeforeFilterFunctions.uri(assetServiceUri))
+                .before(BeforeFilterFunctions.setPath("/api-docs"))
+                .route(RequestPredicates.path("/aggregate/asset-service/api-docs"), HandlerFunctions.http())
+                .build();
+    }
+
+    @Bean
     public RouterFunction<ServerResponse> fallbackRoute() {
         return route("fallbackRoute")
                 .GET("/fallbackRoute", request -> ServerResponse
