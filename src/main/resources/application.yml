@@ -18,6 +18,8 @@ spring:
 servers:
   client:
     uri: ${CLIENT_URL:http://localhost:3000}
+  user-service:
+    uri: ${USER_SERVICE_URL:http://localhost:8081}
   asset-service:
     uri: ${ASSET_SERVICE_URL:http://localhost:8080}
 
@@ -42,3 +44,5 @@ springdoc:
     urls:
       - name: Asset Service
         url: /aggregate/asset-service/api-docs
+      - name: User Service
+        url: /aggregate/user-service/api-docs
