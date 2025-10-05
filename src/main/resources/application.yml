@@ -22,6 +22,8 @@ servers:
     uri: ${USER_SERVICE_URL:http://localhost:8081}
   asset-service:
     uri: ${ASSET_SERVICE_URL:http://localhost:8080}
+  mission-service:
+    uri: ${MISSION_SERVICE_URL:http://localhost:8082}
 
 
 # Role-Based Access Control (RBAC) settings
@@ -46,3 +48,5 @@ springdoc:
         url: /aggregate/asset-service/api-docs
       - name: User Service
         url: /aggregate/user-service/api-docs
+      - name: Mission Service
+        url: /aggregate/mission-service/api-docs
