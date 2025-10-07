@@ -30,9 +30,17 @@ servers:
 rbac:
   routes:
     - path: /api/assets/**
-      methods: POST
+      methods: GET
       roles:
-        - PILOT
+        - ADMIN
+        - PLANNER
+        - OPERATOR
+        - ANALYST
+    - path: /api/assets/**
+      methods: POST, PUT, DELETE
+      roles:
+        - ADMIN
+        - PLANNER
 
 
 # OpenAPI documentation settings
