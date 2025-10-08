@@ -22,50 +22,27 @@ public class ExtractUserFieldsFilter extends OncePerRequestFilter {
                 filterChain.doFilter(request, response);
                 return;
             }
-            UserFields userFields = extractUserFields(authentication);
-            HttpServletRequestWrapper requestWrapper = createWrapper(request, userFields);
+            String userId = authentication.getName();
+            HttpServletRequestWrapper requestWrapper = createWrapper(request, userId);
             filterChain.doFilter(requestWrapper, response);
         } catch (Exception e) {
             filterChain.doFilter(request, response);
         }
     }
 
-    private UserFields extractUserFields(Authentication authentication) {
-        Jwt principal = (Jwt) authentication.getPrincipal();
-
-        String role = authentication.getAuthorities().stream()
-                .findFirst().map(Object::toString).orElse(null);
-
-        return UserFields.builder()
-                .id(principal.getClaimAsString("sub"))
-                .email(principal.getClaimAsString("email"))
-                .givenName(principal.getClaimAsString("given_name"))
-                .familyName(principal.getClaimAsString("family_name"))
-                .gender(principal.getClaimAsString("gender"))
-                .role(role)
-                .build();
-    }
-
-    private HttpServletRequestWrapper createWrapper(HttpServletRequest request, UserFields userFields) {
-
+    private HttpServletRequestWrapper createWrapper(HttpServletRequest request, String userId) {
         return new HttpServletRequestWrapper(request) {
             @Override
             public String getHeader(String name) {
                 return switch (name) {
-                    case "X-User-Id" -> userFields.getId();
-                    case "X-User-Email" -> userFields.getEmail();
-                    case "X-User-GivenName" -> userFields.getGivenName();
-                    case "X-User-FamilyName" -> userFields.getFamilyName();
-                    case "X-User-Gender" -> userFields.getGender();
-                    case "X-User-Role" -> userFields.getRole();
+                    case "X-User-Id" -> userId;
                     default -> super.getHeader(name);
                 };
             }
 
             @Override
             public Enumeration<String> getHeaders(String name) {
-                if (name.equals("X-User-Id") || name.equals("X-User-Email") || name.equals("X-User-GivenName") ||
-                        name.equals("X-User-FamilyName") || name.equals("X-User-Gender") || name.equals("X-User-Role")) {
+                if (name.equals("X-User-Id")) {
                     return java.util.Collections.enumeration(java.util.List.of(getHeader(name)));
                 }
                 return super.getHeaders(name);
@@ -75,11 +52,6 @@ public class ExtractUserFieldsFilter extends OncePerRequestFilter {
             public Enumeration<String> getHeaderNames() {
                 java.util.List<String> headerNames = java.util.Collections.list(super.getHeaderNames());
                 headerNames.add("X-User-Id");
-                headerNames.add("X-User-Email");
-                headerNames.add("X-User-GivenName");
-                headerNames.add("X-User-FamilyName");
-                headerNames.add("X-User-Gender");
-                headerNames.add("X-User-Role");
                 return java.util.Collections.enumeration(headerNames);
             }
         };

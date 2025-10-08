@@ -1,13 +1,12 @@
 package com.corsairops.gateway.config;
 
 import com.corsairops.gateway.config.auth.ExtractUserFieldsFilter;
-import com.corsairops.gateway.config.auth.rbac.RbacFilter;
-import com.corsairops.gateway.config.auth.rbac.RbacProperties;
+import com.corsairops.gateway.config.auth.RbacRules;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.annotation.Order;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -24,26 +23,28 @@ import java.util.List;
 @Configuration
 @EnableMethodSecurity
 @RequiredArgsConstructor
-@EnableConfigurationProperties(RbacProperties.class)
 public class SecurityConfig {
 
     @Value("${servers.client.uri}")
     private String clientUri;
 
-    private final RbacProperties rbacProperties;
-
     @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+    @Order(1)
+    public SecurityFilterChain authenticationSecurityFilterChain(HttpSecurity http) throws Exception {
         return http
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))
                 .csrf(AbstractHttpConfigurer::disable)
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-                .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/swagger-ui.html", "/swagger-ui/**", "/api-docs/**", "/actuator/**", "/aggregate/*/api-docs/**").permitAll()
-                        .anyRequest().authenticated()
-                )
-                .addFilterAfter(new RbacFilter(rbacProperties), AnonymousAuthenticationFilter.class)
-                .addFilterAfter(new ExtractUserFieldsFilter(), RbacFilter.class)
+                .authorizeHttpRequests(auth -> {
+                    auth.requestMatchers("/swagger-ui.html", "/swagger-ui/**", "/api-docs/**", "/actuator/**", "/aggregate/*/api-docs/**").permitAll();
+                    // Add rbac rules
+                    RbacRules.getAllRbacRules().forEach(rule -> {
+                        auth.requestMatchers(rule.getMethod(), rule.getPathPattern()).hasAnyRole(rule.getRoles().toArray(new String[0]));
+                    });
+
+                    auth.anyRequest().authenticated();
+                })
+                .addFilterAfter(new ExtractUserFieldsFilter(), AnonymousAuthenticationFilter.class)
                 .oauth2ResourceServer(oauth2 -> oauth2.jwt(Customizer.withDefaults()))
                 .build();
     }
@@ -62,7 +63,4 @@ public class SecurityConfig {
 
         return source;
     }
-
-
-
 }

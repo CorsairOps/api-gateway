@@ -25,24 +25,6 @@ servers:
   mission-service:
     uri: ${MISSION_SERVICE_URL:http://localhost:8082}
 
-
-# Role-Based Access Control (RBAC) settings
-rbac:
-  routes:
-    - path: /api/assets/**
-      methods: GET
-      roles:
-        - ADMIN
-        - PLANNER
-        - OPERATOR
-        - ANALYST
-    - path: /api/assets/**
-      methods: POST, PUT, DELETE
-      roles:
-        - ADMIN
-        - PLANNER
-
-
 # OpenAPI documentation settings
 springdoc:
   api-docs:
