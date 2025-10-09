@@ -11,6 +11,7 @@ import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
 import java.util.Enumeration;
+import java.util.stream.Collectors;
 
 public class ExtractUserFieldsFilter extends OncePerRequestFilter {
 
@@ -23,26 +24,30 @@ public class ExtractUserFieldsFilter extends OncePerRequestFilter {
                 return;
             }
             String userId = authentication.getName();
-            HttpServletRequestWrapper requestWrapper = createWrapper(request, userId);
+            String roles = authentication.getAuthorities().stream()
+                    .map(grantedAuthority -> grantedAuthority.getAuthority().replace("ROLE_", ""))
+                    .collect(Collectors.joining(","));
+            HttpServletRequestWrapper requestWrapper = createWrapper(request, userId, roles);
             filterChain.doFilter(requestWrapper, response);
         } catch (Exception e) {
             filterChain.doFilter(request, response);
         }
     }
 
-    private HttpServletRequestWrapper createWrapper(HttpServletRequest request, String userId) {
+    private HttpServletRequestWrapper createWrapper(HttpServletRequest request, String userId, String roles) {
         return new HttpServletRequestWrapper(request) {
             @Override
             public String getHeader(String name) {
                 return switch (name) {
                     case "X-User-Id" -> userId;
+                    case "X-User-Roles" -> roles;
                     default -> super.getHeader(name);
                 };
             }
 
             @Override
             public Enumeration<String> getHeaders(String name) {
-                if (name.equals("X-User-Id")) {
+                if (name.equals("X-User-Id") || name.equals("X-User-Roles")) {
                     return java.util.Collections.enumeration(java.util.List.of(getHeader(name)));
                 }
                 return super.getHeaders(name);
@@ -52,6 +57,7 @@ public class ExtractUserFieldsFilter extends OncePerRequestFilter {
             public Enumeration<String> getHeaderNames() {
                 java.util.List<String> headerNames = java.util.Collections.list(super.getHeaderNames());
                 headerNames.add("X-User-Id");
+                headerNames.add("X-User-Roles");
                 return java.util.Collections.enumeration(headerNames);
             }
         };
