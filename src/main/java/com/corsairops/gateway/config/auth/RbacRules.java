@@ -37,10 +37,15 @@ public class RbacRules {
             new RbacRule(HttpMethod.POST, "/api/missions/*/logs/**", List.of("ADMIN", "PLANNER", "OPERATOR"))
     );
 
+    public static final List<RbacRule> userServiceRules = List.of(
+            new RbacRule(HttpMethod.GET, "/api/users/**", allRoles)
+    );
+
     public static List<RbacRule> getAllRbacRules() {
         List<RbacRule> allRules = new ArrayList<>();
         allRules.addAll(assetServiceRules);
         allRules.addAll(missionServiceRules);
+        allRules.addAll(userServiceRules);
         return allRules;
     }
 
