@@ -40,6 +40,7 @@ public class RbacRules {
 
     // Note: Technicians and operators cannot view users directly
     public static final List<RbacRule> userServiceRules = List.of(
+            new RbacRule(HttpMethod.GET, "/api/users/auth", allRoles),
             new RbacRule(HttpMethod.GET, "/api/users/**", List.of("ADMIN", "PLANNER", "ANALYST"))
     );
 
