@@ -34,11 +34,13 @@ public class RbacRules {
             new RbacRule(HttpMethod.POST, "/api/missions/**", plannerAndAboveRoles),
             new RbacRule(HttpMethod.PUT, "/api/missions/**", plannerAndAboveRoles),
             new RbacRule(HttpMethod.DELETE, "/api/missions/**", plannerAndAboveRoles),
-            new RbacRule(HttpMethod.POST, "/api/missions/*/logs/**", List.of("ADMIN", "PLANNER", "OPERATOR"))
+            new RbacRule(HttpMethod.POST, "/api/missions/*/logs/**", List.of("ADMIN", "PLANNER", "OPERATOR")),
+            new RbacRule(HttpMethod.GET, "/api/missions/assigned-missions/missions/**", List.of("ADMIN", "PLANNER", "ANALYST"))
     );
 
+    // Note: Technicians and operators cannot view users directly
     public static final List<RbacRule> userServiceRules = List.of(
-            new RbacRule(HttpMethod.GET, "/api/users/**", allRoles)
+            new RbacRule(HttpMethod.GET, "/api/users/**", List.of("ADMIN", "PLANNER", "ANALYST"))
     );
 
     public static List<RbacRule> getAllRbacRules() {
