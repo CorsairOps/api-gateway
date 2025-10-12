@@ -10,6 +10,7 @@ public class RbacRules {
     /*
         Role Order is:
         ADMIN > PLANNER > OPERATOR > TECHNICIAN > ANALYST
+        The role IOT_DEVICE also exists for specific endpoints.
      */
 
 
@@ -24,6 +25,7 @@ public class RbacRules {
     public static final List<RbacRule> assetServiceRules = List.of(
             new RbacRule(HttpMethod.GET, "/api/assets/**", allRoles),
             new RbacRule(HttpMethod.POST, "/api/assets/**", plannerAndAboveRoles),
+            new RbacRule(HttpMethod.PUT, "/api/assets/*/locations", List.of("ADMIN", "PLANNER", "IOT_DEVICE")),
             new RbacRule(HttpMethod.PUT, "/api/assets/**", plannerAndAboveRoles),
             new RbacRule(HttpMethod.DELETE, "/api/assets/**", plannerAndAboveRoles)
     );
