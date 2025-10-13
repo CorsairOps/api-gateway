@@ -46,11 +46,17 @@ public class RbacRules {
             new RbacRule(HttpMethod.GET, "/api/users/**", List.of("ADMIN", "PLANNER", "ANALYST"))
     );
 
+    public static final List<RbacRule> eventServiceRules = List.of(
+            new RbacRule(HttpMethod.POST, "/events/publish/asset-location-updates", List.of("ADMIN", "PLANNER", "IOT_DEVICE")),
+            new RbacRule(HttpMethod.POST, "/events/publish/**", adminOnlyRoles)
+    );
+
     public static List<RbacRule> getAllRbacRules() {
         List<RbacRule> allRules = new ArrayList<>();
         allRules.addAll(assetServiceRules);
         allRules.addAll(missionServiceRules);
         allRules.addAll(userServiceRules);
+        allRules.addAll(eventServiceRules);
         return allRules;
     }
 

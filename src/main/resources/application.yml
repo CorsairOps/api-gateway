@@ -14,8 +14,12 @@ spring:
       resourceserver:
         jwt:
           issuer-uri: ${JWT_ISSUER_URI}
+  kafka:
+    bootstrap-servers: ${KAFKA_BOOTSTRAP_SERVERS:localhost:9092}
 
 # Servers configuration
+api-gateway:
+  url: ${API_GATEWAY_URL:http://localhost:9000}
 servers:
   client:
     uri: ${CLIENT_URL:http://localhost:3000}
@@ -26,6 +30,9 @@ servers:
   mission-service:
     uri: ${MISSION_SERVICE_URL:http://localhost:8082}
 
+
+
+
 # OpenAPI documentation settings
 springdoc:
   api-docs:
@@ -35,6 +42,8 @@ springdoc:
     enabled: true
     path: /swagger-ui.html
     urls:
+      - name: Gateway
+        url: /api-docs
       - name: Asset Service
         url: /aggregate/asset-service/api-docs
       - name: User Service
