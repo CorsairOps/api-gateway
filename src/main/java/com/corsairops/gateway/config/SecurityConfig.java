@@ -28,6 +28,9 @@ public class SecurityConfig {
     @Value("${servers.client.uri}")
     private String clientUri;
 
+    @Value("${api-gateway.url}")
+    private String apiGatewayUrl;
+
     @Bean
     @Order(1)
     public SecurityFilterChain authenticationSecurityFilterChain(HttpSecurity http) throws Exception {
@@ -54,6 +57,7 @@ public class SecurityConfig {
         CorsConfiguration config = new CorsConfiguration();
         config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
         config.addAllowedOriginPattern(clientUri);
+        config.addAllowedOriginPattern(apiGatewayUrl);
         config.addAllowedOriginPattern("http://localhost:*");
         config.setAllowedHeaders(List.of("*"));
         config.setAllowCredentials(true);
