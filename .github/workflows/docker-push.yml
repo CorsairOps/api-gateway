@@ -42,7 +42,11 @@ jobs:
         with:
           images: wadetyler/corsairops-api-gateway
           tags: |
+            # When triggered by an actual tag push
             type=ref,event=tag
+            # When triggered manually with a version payload
+            type=raw,value=${{ github.event.client_payload.tag }}
+            # Always push "latest"
             type=raw,value=latest
 
       - name: Build and push Docker image
