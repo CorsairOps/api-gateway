@@ -58,7 +58,6 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Trigger Docker Publish Workflow
-        uses: peter-evans/workflow-dispatch@v2
+        uses: peter-evans/repository-dispatch@v4
         with:
-          workflow: "Publish Docker Image"
-          ref: main
+          event-type: publish-docker

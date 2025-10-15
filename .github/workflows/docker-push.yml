@@ -5,6 +5,8 @@ on:
   push:
     tags:
       - 'v*'
+  repository_dispatch:
+    types: [publish-docker]
 
 jobs:
   push_to_registry:
