@@ -43,7 +43,8 @@ jobs:
           images: wadetyler/corsairops-api-gateway
 
       - name: Build and push Docker image
-        uses: docker/build-push-action@3b5e8027fcad23fda98b2e3ac259d8d67585f671
+        id: build-and-push
+        uses: docker/build-push-action@v5
         with:
           context: .
           file: ./Dockerfile
@@ -55,5 +56,5 @@ jobs:
         uses: actions/attest-build-provenance@v3
         with:
           subject-name: index.docker.io/wadetyler/corsairops-api-gateway
-          subject-digest: ${{ steps.meta.outputs.digest }}
+          subject-digest: ${{ steps.build-and-push.outputs.digest }}
           push-to-registry: true
