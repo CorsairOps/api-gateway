@@ -56,3 +56,9 @@ jobs:
           files: staging/*.jar
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Trigger Docker Publish Workflow
+        uses: peter-evans/workflow-dispatch@v2
+        with:
+          workflow: "Publish Docker Image"
+          ref: main
