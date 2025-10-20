@@ -26,6 +26,9 @@ public class Routes {
     @Value("${servers.mission-service.uri}")
     private String missionServiceUri;
 
+    @Value("${servers.maintenance-service.uri}")
+    private String maintenanceServiceUri;
+
     @Bean
     public RouterFunction<ServerResponse> assetServiceApiRoutes() {
         return route("assetServiceApiRoute")
@@ -74,6 +77,23 @@ public class Routes {
                 .before(BeforeFilterFunctions.uri(missionServiceUri))
                 .before(BeforeFilterFunctions.setPath("/api-docs"))
                 .route(RequestPredicates.path("/aggregate/mission-service/api-docs"), HandlerFunctions.http())
+                .build();
+    }
+
+    @Bean
+    public RouterFunction<ServerResponse> maintenanceServiceApiRoutes() {
+        return route("maintenanceServiceApiRoute")
+                .before(BeforeFilterFunctions.uri(maintenanceServiceUri))
+                .route(RequestPredicates.path("/api/maintenance/**"), HandlerFunctions.http())
+                .build();
+    }
+
+    @Bean
+    public RouterFunction<ServerResponse> maintenanceServiceSwaggerRoute() {
+        return route("maintenanceServiceSwaggerRoute")
+                .before(BeforeFilterFunctions.uri(maintenanceServiceUri))
+                .before(BeforeFilterFunctions.setPath("/api-docs"))
+                .route(RequestPredicates.path("/aggregate/maintenance-service/api-docs"), HandlerFunctions.http())
                 .build();
     }
 

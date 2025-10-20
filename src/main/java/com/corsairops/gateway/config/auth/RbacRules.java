@@ -21,7 +21,6 @@ public class RbacRules {
     private static final List<String> technicianAndAboveRoles = List.of("ADMIN", "PLANNER", "OPERATOR", "TECHNICIAN");
     private static final List<String> analystAndAboveRoles = List.of("ADMIN", "PLANNER", "OPERATOR", "TECHNICIAN", "ANALYST");
 
-
     public static final List<RbacRule> assetServiceRules = List.of(
             new RbacRule(HttpMethod.GET, "/api/assets/**", allRoles),
             new RbacRule(HttpMethod.POST, "/api/assets/**", plannerAndAboveRoles),
@@ -51,12 +50,21 @@ public class RbacRules {
             new RbacRule(HttpMethod.POST, "/events/publish/**", adminOnlyRoles)
     );
 
+    public static final List<RbacRule> maintenanceServiceRules = List.of(
+            new RbacRule(HttpMethod.POST, "/api/maintenance/orders/*/notes", List.of("ADMIN", "PLANNER", "TECHNICIAN")),
+            new RbacRule(HttpMethod.GET, "/api/maintenance/**", analystAndAboveRoles),
+            new RbacRule(HttpMethod.POST, "/api/maintenance/**", plannerAndAboveRoles),
+            new RbacRule(HttpMethod.PUT, "/api/maintenance/**", List.of("ADMIN", "PLANNER", "TECHNICIAN")),
+            new RbacRule(HttpMethod.DELETE, "/api/maintenance/**", plannerAndAboveRoles)
+    );
+
     public static List<RbacRule> getAllRbacRules() {
         List<RbacRule> allRules = new ArrayList<>();
         allRules.addAll(assetServiceRules);
         allRules.addAll(missionServiceRules);
         allRules.addAll(userServiceRules);
         allRules.addAll(eventServiceRules);
+        allRules.addAll(maintenanceServiceRules);
         return allRules;
     }
 

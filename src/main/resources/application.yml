@@ -29,9 +29,8 @@ servers:
     uri: ${ASSET_SERVICE_URL:http://localhost:8080}
   mission-service:
     uri: ${MISSION_SERVICE_URL:http://localhost:8082}
-
-
-
+  maintenance-service:
+    uri: ${MAINTENANCE_SERVICE_URL:http://localhost:8084}
 
 # OpenAPI documentation settings
 springdoc:
@@ -50,3 +49,5 @@ springdoc:
         url: /aggregate/user-service/api-docs
       - name: Mission Service
         url: /aggregate/mission-service/api-docs
+      - name: Maintenance Service
+        url: /aggregate/maintenance-service/api-docs
